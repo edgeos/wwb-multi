@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+  wind-workbench-model:
+    image: "wind-workbench-model:latest"
+    environment:
+      - UPDATE_RATE_SEC=1.0
+      - TURBINE_IN_CHANNEL=turbine_control
+      - TURBINE_OUT_CHANNEL=turbine_measurement
+      - WEATHER_OUT_CHANNEL=weather
+      - CDP_CONFIG=/opt/app_config/cdp_config.json
+    networks:
+      - net
+    volumes:
+            - ./config:/opt/app_config:ro
+
+  wind-workbench-gui:
+    image: "wind-workbench-gui:latest"
+    networks:
+      - net
+    ports:
+      - "9098:9005"
+    volumes:
+      - ./config:/opt/app_config
+
+  predix-edge-broker:
+    image: "mqtt-ws:latest"
+    hostname: 127.0.0.1
+    networks:
+      - net
+
+networks:
+  net:
